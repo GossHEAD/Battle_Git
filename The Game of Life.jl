@@ -56,7 +56,7 @@ scena=heatmap!(Life,colormap=:binary)
     step!(st)
 function generation(Lifein)
  
-#initialize
+#Инициализация
     NewLifein=zeros(size+2,size+2)
     for colJump in size+4:size+2:(size+2)*(size+2)-(size+2)-size
     for rowWalk in 0:size-1
@@ -74,10 +74,9 @@ function generation(Lifein)
     return NewLifein 
 end
 for counter in 1:g
-Life=generation(Life) #this generates new generation
-    scena.clear #this clears the board
-    scena=heatmap!(Life,colormap=:binary) # this generates new picture
+Life=generation(Life) #Создание нового поколения
+    scena.clear #Очистка поля
+    scena=heatmap!(Life,colormap=:binary) #Генерация новых полей
     scena.strokewidth=20
-    step!(st) # this saves new picture with increment name
-end
+    step!(st) #Сохранение поля после каждой генерацией с присваиванием номера
 >>>>>>> 25a78e2d58c0c667d3afe9126b2b71cb31580dfb
