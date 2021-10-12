@@ -1,41 +1,74 @@
-
-using Makie
-using AbstractPlotting
-println("How many generations would you like to see?")
-g=parse(Int,readline())
-#readline() Считывает данные с клавиатуры и парсит их в нужное значение(Int,variable/value) и трансформирует его в целое числое
-println("How many columns /rows would you like to see?")
-size=parse(Int,readline())
-Life =round.(rand(size,size))
-#Life =[[0.0,0.0,0.0,0.0,0.0] [0.0,0.0,1.0,0.0,0.0] [0.0,0.0,1.0,0.0,0.0] [0.0,0.0,1.0,0.0,0.0] [0.0,0.0,0.0,0.0,0.0]]
-Life=[zeros(size)';Life;zeros(size)']
-Life=[zeros(size+2) Life zeros(size+2)]
-scena=heatmap!(Life,colormap=:binary)
-    st = Stepper(scena, "generation")
-    step!(st)
-function generation(Lifein)
- 
-#Инициализация
-    NewLifein=zeros(size+2,size+2)
-    for colJump in size+4:size+2:(size+2)*(size+2)-(size+2)-size
-    for rowWalk in 0:size-1
-    i=colJump+rowWalk
-    sum=0
-    sum=Lifein[i-8]+Lifein[i+8]+Lifein[i+7]+Lifein[i-7]+Lifein[i+6]+Lifein[i-6]+Lifein[i-1]+Lifein[i+1]
-    if Lifein[i]==1.0&&1<sum<4 
-    NewLifein[i]=1.0
- elseif Lifein[i]==0&&sum==3.0 
-    NewLifein[i]=1.0
-    end
- 
-    end
-    end
-    return NewLifein 
+mutable struct GameOfLife
+    current_frame::Matrix{Int}
+    next_frame::Matrix{Int}
 end
-for counter in 1:g
-Life=generation(Life) #Создание нового поколения
-    scena.clear #Очистка поля
-    scena=heatmap!(Life,colormap=:binary) #Генерация новых полей
-    scena.strokewidth=20
-    step!(st) #Сохранение поля после каждой генерацией с присваиванием номера
->>>>>>> 25a78e2d58c0c667d3afe9126b2b71cb31580dfb
+
+function stepgame!(state::GameOfLife)
+    cr   = state.current_frame
+    next = state.next_frame
+    for i in 1:n
+        for g in 1:m
+            x = cr[i, g]
+            d = 0
+            if i < n 
+                d += cr[i+1, g]
+            end
+            if i < n && g < m  
+                d += cr[i+1, g+1]
+            end
+            if g < m
+                d += cr[i, g+1]
+            end
+            if i > 1     
+                d += cr[i-1, g]
+            end
+            if i > 1 && g > 1
+                d += cr[i-1, g-1]
+            end
+            if g > 1
+                d += cr[i, g-1]
+            end
+            if g > 1 && i < n
+                d += cr[i+1, g-1]
+            end
+            if i > 1 && g < m
+                d += cr[i-1, g+1]
+            end
+            if d == 3 
+                if x == 0
+                    x = 1
+                end
+            end
+            if d < 2
+                if x == 1
+                    x= 0
+                end
+            end
+            if d > 3 
+                if x == 1
+                    x = 0
+                end
+            end
+            next[i, g] = x
+        end
+    end
+    # swap
+    state.current_frame = next
+    state.next_frame = cr 
+    return nothing
+end
+
+
+using Plots
+
+n = 150
+m = 150
+
+game = GameOfLife(rand(0:1, n, m), zeros(n, m))
+
+anim = @animate for time = 1:100
+    stepgame!(game)
+    cr = game.current_frame
+    heatmap(cr)
+end
+gif(anim, "LIFE.gif", fps = 10)
