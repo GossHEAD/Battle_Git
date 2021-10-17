@@ -12,56 +12,51 @@ function stepgame!(state::GameOfLife)
             # Если i = n || g = m || i = n && g = m то проверяем координуту для i = n => (g;1) , для g = m => (1;i), для i = n && g = m => 1;1
             x = cr[i, g]
             d = 0
-            if i < n 
+
+            
+
+            if i < n # Сосед снизу 
                 d += cr[i+1, g]
+                if mod1(i+1, g)
             end
-            if i < n && g < m  
+            if i < n && g < m  # Справа снизу
                 d += cr[i+1, g+1]
             end
-            if g < m
+            if g < m # Справа
                 d += cr[i, g+1]
             end
-            if i > 1     
+            if i > 1 # Сверху    
                 d += cr[i-1, g]
             end
-            if i > 1 && g > 1
+            if i > 1 && g > 1  #Сверху слева
                 d += cr[i-1, g-1]
             end
-            if g > 1
+            if g > 1 #Левый
                 d += cr[i, g-1]
             end
-            if g > 1 && i < n
+            if g > 1 && i < n # Снизу слева
                 d += cr[i+1, g-1]
             end
-            if i > 1 && g < m
-                d += cr[i-1, g+1]
+            if i > 1 && g < m # Сверху справо
+                d += cr[i-1, g+1]  
             end
-            probabylityOFstatus = rand(1:100)
+
             if d == 3  
                 if x == 0
                     x = 1
-                    if probabylityOFstatus <= 90 
-                        x = 1
-                    else 
-                        x = 0
+                    end
                 end
             end
             if d < 2
                 if x == 1
                     x= 0
-                    if probabylityOFstatus <= 90 
-                        x = 0
-                    else 
-                        x = 1
+                    end
                 end
             end
             if d > 3 
                 if x == 1
                     x = 0
-                    if probabylityOFstatus <= 90 
-                        x = 0
-                    else 
-                        x = 1
+                    end
                 end
             end
             next[i, g] = x
@@ -76,8 +71,8 @@ end
 
 using Plots
 
-n = 150
-m = 150
+n = 20
+m = 20
 
 game = GameOfLife(rand(0:1, n, m), zeros(n, m))
 
@@ -87,3 +82,5 @@ anim = @animate for time = 1:100
     heatmap(cr)
 end
 gif(anim, "LIFE.gif", fps = 10)
+
+
