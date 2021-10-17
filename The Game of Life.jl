@@ -10,26 +10,15 @@ function stepgame!(state::GameOfLife)
         for g in 1:m
             x = cr[i, g]
             d = 0
-
-
-
-            if i == n 
-                d += cr[i-(n-1), g]
+            if g == n || g == -1
+                d += cr[i , mod1(g,m)]
             end
-            if g == m 
-                d += cr[i, g - (m-1)]
+            if i == m || i == -1
+               d += cr[mod1(i, n), g]
             end
-            if i == 1
-                d += cr[i+(n-1), g]
+            if g == -1 && i == -1 || g == -1 && i == m || g == m && i == -1|| g == n && i == n
+                d += cr[mod1(i,n), mod1(g,m)]
             end
-            if g == 1 
-                d += cr[i, g+(m-1)]
-            end
-
-
-
-
-
             if i < n # Сосед снизу 
                 d += cr[i+1, g]
             end
@@ -93,5 +82,3 @@ anim = @animate for time = 1:100
     heatmap(cr)
 end
 gif(anim, "LIFE.gif", fps = 10)
-
-
