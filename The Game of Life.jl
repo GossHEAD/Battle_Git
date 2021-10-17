@@ -8,16 +8,30 @@ function stepgame!(state::GameOfLife)
     next = state.next_frame
     for i in 1:n
         for g in 1:m
-            # 1-уя Модификацию решили (Строки с 39 -> 64) | 2 -ую решили теоритически (Строка 12)
-            # Если i = n || g = m || i = n && g = m то проверяем координуту для i = n => (g;1) , для g = m => (1;i), для i = n && g = m => 1;1
             x = cr[i, g]
             d = 0
 
-            
+
+
+            if i == n 
+                d += cr[i-(n-1), g]
+            end
+            if g == m 
+                d += cr[i, g - (m-1)]
+            end
+            if i == 1
+                d += cr[i+(n-1), g]
+            end
+            if g == 1 
+                d += cr[i, g+(m-1)]
+            end
+
+
+
+
 
             if i < n # Сосед снизу 
                 d += cr[i+1, g]
-                if mod1(i+1, g)
             end
             if i < n && g < m  # Справа снизу
                 d += cr[i+1, g+1]
@@ -44,19 +58,16 @@ function stepgame!(state::GameOfLife)
             if d == 3  
                 if x == 0
                     x = 1
-                    end
                 end
             end
             if d < 2
                 if x == 1
                     x= 0
-                    end
                 end
             end
             if d > 3 
                 if x == 1
                     x = 0
-                    end
                 end
             end
             next[i, g] = x
