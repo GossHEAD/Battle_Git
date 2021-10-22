@@ -19,5 +19,4 @@ function myreverse1(name)
     end
     return name
 end
-println("Введитие нужно вам слово два раза\n")
 myreverse1("name")
